@@ -10,9 +10,5 @@ export class HomePage {
 
   constructor(private navCtrl: NavController) {}
 
-  // Método para redirigir a la página de login
-  navigateToLogin() {
-    this.navCtrl.navigateForward('/login');  // Redirige a la página de login
-  }
 
 }

@@ -1,10 +1,9 @@
 <ion-header>
   <ion-toolbar>
-    <!-- Ícono de menú para abrir el sidebar -->
+    <!-- Botón de menú -->
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button> <!-- Este botón abre el menú lateral -->
+      <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    
     <ion-img class="logo" slot="start" src="assets/icon/logo.png"></ion-img>
     <ion-title>Compra y Venta de Entradas</ion-title>
   </ion-toolbar>
@@ -12,14 +11,18 @@
 
 <ion-content class="ion-padding">
   <!-- Contenedor del logo -->
-  <div class="logo-container">
-  </div>
+  <div class="logo-container"></div>
 
   <h1>¿Quiénes somos?</h1>
   <p>¡Bienvenido a Compra y Venta de Entradas! Este es un lugar para gente que gusta de la buena música y de los conciertos.</p>
 
-<!-- Botón para iniciar sesión usando solo routerLink -->
-<ion-button expand="block" routerLink="/login" color="primary">Iniciar Sesión</ion-button>
+  <!-- Mover el botón hacia la parte inferior -->
+  <div class="fixed-bottom-buttons" style="position: fixed; bottom: 20px; left: 0; right: 0; padding: 0 20px;">
+    <ion-button routerLink="/login" expand="block" shape="round" color="primary">
+      <ion-icon slot="start" name="log-in"></ion-icon>Iniciar Sesión
+    </ion-button>
+  </div>
+</ion-content>
 
 <!-- Menú lateral (sidebar) -->
 <ion-menu side="start" menuId="first" contentId="main-content">
@@ -31,7 +34,6 @@
 
   <ion-content>
     <ion-list>
-      <!-- Enlaces a las diferentes páginas -->
       <ion-item routerLink="/home">Home</ion-item>
       <ion-item routerLink="/login">Login</ion-item>
       <ion-item routerLink="/compra-entradas">Compra de Entradas</ion-item>

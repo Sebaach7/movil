@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import * as $ from 'jquery';
+import { Component } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 
 @Component({
@@ -7,43 +6,38 @@ import { ToastController } from '@ionic/angular';
   templateUrl: './compra-entradas.page.html',
   styleUrls: ['./compra-entradas.page.scss'],
 })
-export class CompraEntradasPage implements OnInit {
+export class CompraEntradasPage {
 
-  constructor(private toastController: ToastController) { }
+  selectedEvent = '';  // Evento seleccionado
+  ticketCount = 1;  // Cantidad de entradas por defecto
+  showSpinner = false;  // Controla el spinner
 
-  ngOnInit() {
-    $(document).ready(() => {
-      $('#buyTicketBtn').on('click', async (event: Event) => {
-        event.preventDefault();
+  constructor(private toastController: ToastController) {}
 
-        const selectedEvent = $('#eventSelect').val() as string;
-        const ticketCount = $('#ticketCount').val() as string;
-
-        if (!selectedEvent || !ticketCount || parseInt(ticketCount) < 1) {
-          const toast = await this.toastController.create({
-            message: 'Por favor, selecciona un evento y una cantidad válida de entradas.',
-            duration: 2000,
-            color: 'danger'
-          });
-          await toast.present();
-        } else {
-          // Mostrar el spinner (animación) de Ionic
-          $('#spinner').show();
-
-          // Simular una compra de entradas
-          setTimeout(async () => {
-            const toast = await this.toastController.create({
-              message: `Has comprado ${ticketCount} entradas para ${selectedEvent}`,
-              duration: 2000,
-              color: 'success'
-            });
-            await toast.present();
-
-            // Ocultar el spinner después de la simulación
-            $('#spinner').hide();
-          }, 2000);  // Simula un retraso de 2 segundos
-        }
+  async comprarEntradas() {
+    if (!this.selectedEvent || this.ticketCount < 1 || this.ticketCount > 10) {
+      const toast = await this.toastController.create({
+        message: 'Por favor, selecciona un evento y una cantidad válida de entradas (entre 1 y 10).',
+        duration: 2000,
+        color: 'danger'
       });
-    });
+      await toast.present();
+    } else {
+      // Mostrar el spinner de "cargando"
+      this.showSpinner = true;
+
+      // Simular el proceso de compra con un retraso
+      setTimeout(async () => {
+        const toast = await this.toastController.create({
+          message: `Has comprado ${this.ticketCount} entradas para ${this.selectedEvent}`,
+          duration: 2000,
+          color: 'success'
+        });
+        await toast.present();
+
+        // Ocultar el spinner después de la simulación
+        this.showSpinner = false;
+      }, 2000);  // Retraso de 2 segundos para simular la compra
+    }
   }
 }

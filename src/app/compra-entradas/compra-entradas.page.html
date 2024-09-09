@@ -1,52 +1,28 @@
 <ion-header>
   <ion-toolbar>
-    <!-- Ícono de menú para abrir el sidebar -->
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button> <!-- Este botón abre el menú lateral -->
-    </ion-buttons>
     <ion-title>Comprar Entradas</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form id="ticketForm">
+  <form>
     <ion-item>
       <ion-label position="floating">Evento</ion-label>
-      <ion-select id="eventSelect" placeholder="Selecciona un evento">
+      <ion-select [(ngModel)]="selectedEvent" name="selectedEvent" placeholder="Selecciona un evento" required>
         <ion-select-option value="radiohead">Radiohead</ion-select-option>
         <ion-select-option value="thestrokes">The Strokes</ion-select-option>
+        <ion-select-option value="jeffbuckley">Jeff Buckley</ion-select-option>
       </ion-select>
     </ion-item>
 
     <ion-item>
       <ion-label position="floating">Cantidad de Entradas</ion-label>
-      <ion-input id="ticketCount" type="number" min="1" max="10" required></ion-input>
+      <ion-input [(ngModel)]="ticketCount" name="ticketCount" type="number" min="1" max="10" required></ion-input>
     </ion-item>
 
-    <ion-button expand="full" id="buyTicketBtn">Comprar Entradas</ion-button>
+    <ion-button expand="full" (click)="comprarEntradas()">Comprar Entradas</ion-button>
   </form>
 
-  <!-- Animación de Ionic que se activará cuando se haga la compra -->
-  <ion-spinner id="spinner" name="crescent" style="display: none;"></ion-spinner>
+  <!-- Spinner de animación que se activará durante la compra -->
+  <ion-spinner *ngIf="showSpinner" name="crescent"></ion-spinner>
 </ion-content>
-
-<!-- Menú lateral (sidebar) -->
-<ion-menu side="start" menuId="first" contentId="main-content">
-  <ion-header>
-    <ion-toolbar>
-      <ion-title>Menú</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <ion-content>
-    <ion-list>
-      <!-- Enlaces a las diferentes páginas -->
-      <ion-item routerLink="/home">Home</ion-item>
-      <ion-item routerLink="/login">Login</ion-item>
-      <ion-item routerLink="/compra-entradas">Compra de Entradas</ion-item>
-    </ion-list>
-  </ion-content>
-</ion-menu>
-
-<!-- Contenedor del contenido principal -->
-<ion-router-outlet id="main-content"></ion-router-outlet>

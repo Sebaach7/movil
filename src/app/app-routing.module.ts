@@ -8,7 +8,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'home',  // Redirigir al home al cargar la aplicación
+    redirectTo: 'home',
     pathMatch: 'full'
   },
   {
@@ -18,13 +18,13 @@ const routes: Routes = [
   {
     path: 'compra-entradas',
     loadChildren: () => import('./compra-entradas/compra-entradas.module').then(m => m.CompraEntradasPageModule)
-  },
+  }
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })  // Precargar los módulos para mejorar el rendimiento
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
