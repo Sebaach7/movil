@@ -16,30 +16,10 @@
   <h1>¿Quiénes somos?</h1>
   <p>¡Bienvenido a Compra y Venta de Entradas! Este es un lugar para gente que gusta de la buena música y de los conciertos.</p>
 
-  <!-- Mover el botón hacia la parte inferior -->
-  <div class="fixed-bottom-buttons" style="position: fixed; bottom: 20px; left: 0; right: 0; padding: 0 20px;">
+  <!-- Botón para iniciar sesión -->
+  <div class="fixed-bottom-buttons">
     <ion-button routerLink="/login" expand="block" shape="round" color="primary">
       <ion-icon slot="start" name="log-in"></ion-icon>Iniciar Sesión
     </ion-button>
   </div>
 </ion-content>
-
-<!-- Menú lateral (sidebar) -->
-<ion-menu side="start" menuId="first" contentId="main-content">
-  <ion-header>
-    <ion-toolbar>
-      <ion-title>Menú</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <ion-content>
-    <ion-list>
-      <ion-item routerLink="/home">Home</ion-item>
-      <ion-item routerLink="/login">Login</ion-item>
-      <ion-item routerLink="/compra-entradas">Compra de Entradas</ion-item>
-    </ion-list>
-  </ion-content>
-</ion-menu>
-
-<!-- Contenedor del contenido principal -->
-<ion-router-outlet id="main-content"></ion-router-outlet>
