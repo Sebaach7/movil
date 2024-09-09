@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Comprar Entradas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form id="ticketForm">
+    <ion-item>
+      <ion-label position="floating">Evento</ion-label>
+      <ion-select id="eventSelect" placeholder="Selecciona un evento">
+        <ion-select-option value="radiohead">Radiohead</ion-select-option>
+        <ion-select-option value="thestrokes">The Strokes</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Cantidad de Entradas</ion-label>
+      <ion-input id="ticketCount" type="number" min="1" max="10" required></ion-input>
+    </ion-item>
+
+    <ion-button expand="full" id="buyTicketBtn">Comprar Entradas</ion-button>
+  </form>
+
+  <!-- Animación de Ionic que se activará cuando se haga la compra -->
+  <ion-spinner id="spinner" name="crescent" style="display: none;"></ion-spinner>
+</ion-content>

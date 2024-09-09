@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as $ from 'jquery';
-import { NavController, ToastController } from '@ionic/angular';
+import { NavController, ToastController, ModalController } from '@ionic/angular';
+import { ModalComponent } from '../modal/modal.component';  // Asegúrate de tener el modal importado
 
 @Component({
   selector: 'app-login',
@@ -8,41 +9,37 @@ import { NavController, ToastController } from '@ionic/angular';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-  users = [
-    { username: 'user1', password: 'password1A' },
-    { username: 'user2', password: 'Password123' }
-  ];
 
-  constructor(private navCtrl: NavController, private toastController: ToastController) {}
+  constructor(private navCtrl: NavController, private toastController: ToastController, private modalCtrl: ModalController) {}
 
   ngOnInit() {
     this.initializeLogin();
   }
 
   initializeLogin() {
-    // Validar el formulario con jQuery al hacer clic en el botón de login
+    // Al hacer clic en el botón de login
     $('#loginForm').on('submit', (event) => {
       event.preventDefault();
 
       const username = $('#username').val() as string;  // Aseguramos que el valor sea de tipo string
-      const password = $('#password').val() as string;  // Forzamos que sea string
+      const password = $('#password').val() as string;  // Aseguramos que sea string
+
+      // Validaciones con jQuery para que todos los campos estén llenos y cumplan con los requisitos
+      if (!username || !password) {
+        this.showToast('Por favor, completa todos los campos.');
+        return;
+      }
 
       if (!this.validatePassword(password)) {
         this.showToast('La contraseña debe tener al menos 4 números, 3 caracteres y 1 mayúscula.');
         return;
       }
 
-      const user = this.users.find(u => u.username === username && u.password === password);
-
-      if (user) {
-        // Almacenar el nombre de usuario en localStorage
-        localStorage.setItem('username', username);
-        
-        // Redirigir al home
-        this.navCtrl.navigateRoot('/home');
-      } else {
-        this.showToast('Usuario o contraseña incorrecta');
-      }
+      // Almacenar el nombre de usuario en localStorage (opcional)
+      localStorage.setItem('username', username);
+      
+      // Redirigir directamente a la página de compra de entradas
+      this.navCtrl.navigateRoot('/compra-entradas');
     });
   }
 
@@ -62,5 +59,13 @@ export class LoginPage implements OnInit {
       color: 'danger'
     });
     await toast.present();
+  }
+
+  // Método para abrir el modal de "Olvidar Contraseña"
+  async openForgotPasswordModal() {
+    const modal = await this.modalCtrl.create({
+      component: ModalComponent  // Aquí llamamos al componente del modal
+    });
+    return await modal.present();
   }
 }

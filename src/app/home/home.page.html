@@ -1,17 +1,18 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>
-      Home
-    </ion-title>
+    <ion-img class="logo" slot="start" src="assets/icon/logo.png"></ion-img>
+    <ion-title>Compra y Venta de Entradas</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div class="company-info">
-    <h1>Compra y Ventas de Entradas</h1>
-    <p>¡Bienvenido a nuestra plataforma!</p>
-
-    <!-- Botón para redirigir al login -->
-    <ion-button expand="full" (click)="goToLogin()">Iniciar Sesión</ion-button>
+  <!-- Contenedor del logo -->
+  <div class="logo-container">
   </div>
+
+  <h1>¿Quiénes somos?</h1>
+  <p>¡Bienvenido a Compra y Venta de Entradas! Este es un lugar para gente que gusta de la buena música y de los conciertos.</p>
+
+  <!-- Botón para iniciar sesión con evento click -->
+  <ion-button expand="block" color="primary" (click)="navigateToLogin()">Iniciar Sesión</ion-button>
 </ion-content>
