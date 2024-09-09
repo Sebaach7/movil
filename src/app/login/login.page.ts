@@ -38,8 +38,8 @@ export class LoginPage implements OnInit {
       // Almacenar el nombre de usuario en localStorage (opcional)
       localStorage.setItem('username', username);
       
-      // Redirigir directamente a la página de compra de entradas
-      this.navCtrl.navigateRoot('/compra-entradas');
+      // Redirigir directamente a la página Home
+      this.navCtrl.navigateRoot('/home');  // Redirige a Home
     });
   }
 
