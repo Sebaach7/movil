@@ -1,5 +1,9 @@
 <ion-header>
   <ion-toolbar>
+    <!-- Ícono de menú para abrir el sidebar -->
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button> <!-- Este botón abre el menú lateral -->
+    </ion-buttons>
     <ion-title>Comprar Entradas</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -25,3 +29,24 @@
   <!-- Animación de Ionic que se activará cuando se haga la compra -->
   <ion-spinner id="spinner" name="crescent" style="display: none;"></ion-spinner>
 </ion-content>
+
+<!-- Menú lateral (sidebar) -->
+<ion-menu side="start" menuId="first" contentId="main-content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Menú</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <ion-list>
+      <!-- Enlaces a las diferentes páginas -->
+      <ion-item routerLink="/home">Home</ion-item>
+      <ion-item routerLink="/login">Login</ion-item>
+      <ion-item routerLink="/compra-entradas">Compra de Entradas</ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<!-- Contenedor del contenido principal -->
+<ion-router-outlet id="main-content"></ion-router-outlet>
