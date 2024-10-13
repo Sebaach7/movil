@@ -2,25 +2,32 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';  // Importar IonicModule
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { ModalComponent } from './modal/modal.component';  // Importar el componente modal
+import { ModalComponent } from './modal/modal.component';
+
+// Firebase imports
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ModalComponent  // Declarar el componente modal aquí
+    ModalComponent
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(),  // Asegúrate de tener IonicModule
+    IonicModule.forRoot(),
     AppRoutingModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireAuthModule
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],  // Añadir CUSTOM_ELEMENTS_SCHEMA para manejar componentes personalizados
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule { }

@@ -18,6 +18,10 @@ const routes: Routes = [
   {
     path: 'compra-entradas',
     loadChildren: () => import('./compra-entradas/compra-entradas.module').then(m => m.CompraEntradasPageModule)
+  },
+  {
+    path: 'registro',
+    loadChildren: () => import('./registro/registro.module').then(m => m.RegistroPageModule)  // Ruta corregida
   }
 ];
 
