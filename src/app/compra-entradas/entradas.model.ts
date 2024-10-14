@@ -1,7 +1,7 @@
 export interface Entrada {
-  id: string;
+  id?: string;
   evento: string;
   cantidad: number;
-  descripcion: string;  // Nueva descripción
-  precio: number;  // Nuevo precio
+  descripcion: string;
+  precio: number;
 }

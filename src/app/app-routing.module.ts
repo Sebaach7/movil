@@ -21,7 +21,15 @@ const routes: Routes = [
   },
   {
     path: 'registro',
-    loadChildren: () => import('./registro/registro.module').then(m => m.RegistroPageModule)  // Ruta corregida
+    loadChildren: () => import('./registro/registro.module').then(m => m.RegistroPageModule)
+  },
+  {
+    path: 'carrito',
+    loadChildren: () => import('./carrito/carrito.module').then(m => m.CarritoPageModule)
+  },
+  {
+    path: 'confirmacion-pago',
+    loadChildren: () => import('./confirmacion-pago/confirmacion-pago.module').then(m => m.ConfirmacionPagoPageModule)
   }
 ];
 

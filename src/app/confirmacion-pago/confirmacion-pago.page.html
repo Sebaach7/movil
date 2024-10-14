@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Confirmación de Pago</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <h2>Resumen de tu compra</h2>
+  <ion-list>
+    <ion-item *ngFor="let entrada of carrito">
+      <ion-label>
+        <h3>{{ entrada.evento }}</h3>
+        <p>Cantidad: {{ entrada.cantidad }}</p>
+        <p>Precio Total: {{ entrada.precio | currency }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <h3>Total a Pagar: {{ totalCompra | currency }}</h3>
+
+  <ion-button expand="full" color="success" (click)="confirmarPago()">
+    Confirmar Pago
+  </ion-button>
+
+</ion-content>

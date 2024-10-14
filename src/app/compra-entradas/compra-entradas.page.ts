@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { Entrada } from './entradas.model';
 import { EntradasService } from './entradas.service';
+import { CarritoService } from '../services/carrito.service';  // Asegúrate de que la ruta sea correcta
+import { AnimationController } from '@ionic/angular';  // Para manejar las animaciones
 
 @Component({
   selector: 'app-compra-entradas',
@@ -9,7 +11,7 @@ import { EntradasService } from './entradas.service';
   styleUrls: ['./compra-entradas.page.scss'],
 })
 export class CompraEntradasPage implements OnInit {
-
+  entradas: Entrada[] = [];
   selectedEvent = '';
   ticketCount = 1;
   descripcion = '';  // Descripción del evento
@@ -17,17 +19,64 @@ export class CompraEntradasPage implements OnInit {
   precioTotal = 0;  // Precio total por evento seleccionado
   carrito: Entrada[] = [];  // Carrito de compras con múltiples entradas
   showSpinner = false;
-  entradas: Entrada[] = [];  // Array para almacenar las entradas del servidor
   isEditing = false;  // Indica si estamos editando una entrada
   editEntradaId: string | null = null;  // Almacenar el ID de la entrada que estamos editando
   
-  constructor(private toastController: ToastController, private entradasService: EntradasService) {}
+  constructor(
+    private toastController: ToastController, 
+    private entradasService: EntradasService,  // Asegúrate de que el servicio esté bien implementado
+    private carritoService: CarritoService,  // Inyectamos el servicio de carrito
+    private animationCtrl: AnimationController  // Inyectamos el controlador de animación
+  ) {}
 
   ngOnInit() {
     this.loadEntradas();  // Cargar las entradas desde Firebase cuando la página cargue
   }
 
-  // Cargar detalles según el evento seleccionado
+  // Método para agregar entradas al carrito
+  agregarAlCarrito() {
+    if (!this.selectedEvent || this.ticketCount < 1 || this.ticketCount > 10 || this.precioUnitario <= 0) {
+      this.mostrarToast('Por favor, selecciona un evento, una cantidad válida de entradas y un precio.', 'danger');
+    } else {
+      const nuevaEntrada: Entrada = {
+        id: this.editEntradaId || '',  // ID temporal hasta que se guarde en Firebase
+        evento: this.selectedEvent,
+        cantidad: this.ticketCount,
+        descripcion: this.descripcion,
+        precio: this.precioTotal  // Precio total para la cantidad seleccionada
+      };
+
+      // Agregar la entrada al carrito usando el servicio
+      this.carritoService.agregarEntrada(nuevaEntrada);
+
+      this.animarCarrito();  // Ejecutar la animación al agregar al carrito
+      this.mostrarToast('Entrada agregada al carrito.', 'success');
+
+      // Limpiar el formulario después de agregar
+      this.selectedEvent = '';
+      this.ticketCount = 1;
+      this.descripcion = '';
+      this.precioUnitario = 0;
+      this.precioTotal = 0;
+    }
+  }
+
+  // Método para mostrar mensajes
+  async mostrarToast(mensaje: string, color: string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      duration: 2000,
+      color: color
+    });
+    await toast.present();
+  }
+
+  // Lógica para calcular el precio total
+  calcularPrecioTotal() {
+    this.precioTotal = this.precioUnitario * this.ticketCount;
+  }
+
+  // Implementar el método para definir la descripción y el precio
   setEventoDetalles() {
     switch (this.selectedEvent) {
       case 'radiohead':
@@ -47,45 +96,23 @@ export class CompraEntradasPage implements OnInit {
         this.precioUnitario = 0;
         break;
     }
-    this.calcularPrecioTotal();  // Calcular el precio total por el evento seleccionado
+    this.calcularPrecioTotal();
   }
 
-  // Calcular el precio total por evento seleccionado
-  calcularPrecioTotal() {
-    this.precioTotal = this.precioUnitario * this.ticketCount;
-  }
-
-  // Agregar la entrada seleccionada al carrito
-  agregarAlCarrito() {
-    if (!this.selectedEvent || this.ticketCount < 1 || this.ticketCount > 10 || this.precioUnitario <= 0) {
-      this.mostrarToast('Por favor, selecciona un evento, una cantidad válida de entradas y un precio.', 'danger');
+  // Animación al agregar al carrito
+  animarCarrito() {
+    const carritoElement = document.querySelector(`#carrito-${this.carrito.length - 1}`);
+    
+    if (carritoElement) {  // Verificar que el elemento no sea nulo
+      const animation = this.animationCtrl.create()
+        .addElement(carritoElement)
+        .duration(500)
+        .fromTo('opacity', '0', '1')
+        .fromTo('transform', 'translateX(100px)', 'translateX(0px)');
+  
+      animation.play();
     } else {
-      const nuevaEntrada: Entrada = {
-        id: this.editEntradaId || '',  // ID temporal hasta que se guarde en Firebase
-        evento: this.selectedEvent,
-        cantidad: this.ticketCount,
-        descripcion: this.descripcion,
-        precio: this.precioTotal  // Precio total para la cantidad seleccionada
-      };
-
-      // Verificar si ya existe una entrada del mismo evento en el carrito
-      const entradaExistente = this.carrito.find(entrada => entrada.evento === this.selectedEvent);
-
-      if (entradaExistente) {
-        // Si ya existe, actualizamos la cantidad y el precio total
-        entradaExistente.cantidad += this.ticketCount;
-        entradaExistente.precio += this.precioTotal;
-      } else {
-        // Si no existe, agregamos la nueva entrada al carrito
-        this.carrito.push(nuevaEntrada);
-      }
-
-      // Limpiar el formulario
-      this.selectedEvent = '';
-      this.ticketCount = 1;
-      this.descripcion = '';
-      this.precioUnitario = 0;
-      this.precioTotal = 0;
+      console.error("Elemento del carrito no encontrado para animación.");
     }
   }
 
@@ -114,18 +141,7 @@ export class CompraEntradasPage implements OnInit {
     } finally {
       this.showSpinner = false;
       this.carrito = [];  // Vaciar el carrito después de la compra
-      this.loadEntradas();  // Recargar las entradas
     }
-  }
-
-  // Mostrar un mensaje de toast
-  async mostrarToast(mensaje: string, color: string) {
-    const toast = await this.toastController.create({
-      message: mensaje,
-      duration: 2000,
-      color: color
-    });
-    await toast.present();
   }
 
   // Cargar todas las entradas desde Firebase
@@ -134,7 +150,7 @@ export class CompraEntradasPage implements OnInit {
     this.entradasService.getEntradas().subscribe((data: Entrada[]) => {
       this.entradas = data;
       this.showSpinner = false;
-    }, (error) => {
+    }, (error: any) => {
       this.showSpinner = false;
       console.error('Error al cargar las entradas:', error);
     });
@@ -147,13 +163,14 @@ export class CompraEntradasPage implements OnInit {
     this.descripcion = entrada.descripcion;
     this.precioUnitario = entrada.precio / entrada.cantidad;  // Precio unitario
     this.precioTotal = entrada.precio;
-    this.editEntradaId = entrada.id;
+    this.editEntradaId = entrada.id ? entrada.id : null;
     this.isEditing = true;
   }
 
   // Eliminar una entrada del carrito
   eliminarEntradaCarrito(index: number) {
     this.carrito.splice(index, 1);
+    this.mostrarToast('Entrada eliminada del carrito.', 'danger');
   }
 
   // Cancelar la edición

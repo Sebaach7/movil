@@ -30,11 +30,11 @@
       <ion-input [(ngModel)]="precioTotal" name="precioTotal" type="number" readonly></ion-input>
     </ion-item>
 
-    <ion-button expand="full" (click)="agregarAlCarrito()" color="primary">
+    <ion-button expand="full" (click)="agregarAlCarrito()" color="primary" shape="round">
       Agregar al Carrito
     </ion-button>
 
-    <ion-button *ngIf="isEditing" expand="full" (click)="cancelarEdicion()" color="medium">
+    <ion-button *ngIf="isEditing" expand="full" (click)="cancelarEdicion()" color="medium" shape="round">
       Cancelar Edición
     </ion-button>
   </form>
@@ -42,7 +42,7 @@
   <!-- Mostrar carrito -->
   <h2>Carrito de Entradas</h2>
   <ion-list>
-    <ion-item *ngFor="let entrada of carrito; let i = index">
+    <ion-item *ngFor="let entrada of carrito; let i = index" id="carrito-{{i}}">
       <ion-label>
         <h3>{{ entrada.evento | titlecase }}</h3>
         <p>Cantidad: {{ entrada.cantidad }}</p>
@@ -59,10 +59,13 @@
   </ion-list>
 
   <!-- Mostrar el botón de compra solo si hay entradas en el carrito -->
-  <ion-button *ngIf="carrito.length > 0" expand="full" (click)="comprarEntradas()" color="success">
+  <ion-button *ngIf="carrito.length > 0" expand="full" (click)="comprarEntradas()" color="success" shape="round">
     Comprar Entradas
   </ion-button>
 
   <!-- Spinner de animación que se activará durante la compra o edición -->
   <ion-spinner *ngIf="showSpinner" name="crescent"></ion-spinner>
 </ion-content>
+
+<!-- Toast para mensajes -->
+<ion-toast id="toast"></ion-toast>
