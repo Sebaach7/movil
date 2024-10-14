@@ -30,6 +30,10 @@ const routes: Routes = [
   {
     path: 'confirmacion-pago',
     loadChildren: () => import('./confirmacion-pago/confirmacion-pago.module').then(m => m.ConfirmacionPagoPageModule)
+  },
+  {
+    path: 'eventos',  // Nueva ruta para eventos
+    loadChildren: () => import('./eventos/eventos.module').then(m => m.EventosModule)  // Asegúrate de usar EventosModule
   }
 ];
 
