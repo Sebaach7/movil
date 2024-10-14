@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './guards/auth.guard';  // Asegúrate de que el guard esté importado correctamente
 
 const routes: Routes = [
   {
@@ -25,15 +26,17 @@ const routes: Routes = [
   },
   {
     path: 'carrito',
-    loadChildren: () => import('./carrito/carrito.module').then(m => m.CarritoPageModule)
+    loadChildren: () => import('./carrito/carrito.module').then(m => m.CarritoPageModule),
+    canActivate: [AuthGuard]  // Protege esta ruta
   },
   {
     path: 'confirmacion-pago',
-    loadChildren: () => import('./confirmacion-pago/confirmacion-pago.module').then(m => m.ConfirmacionPagoPageModule)
+    loadChildren: () => import('./confirmacion-pago/confirmacion-pago.module').then(m => m.ConfirmacionPagoPageModule),
+    canActivate: [AuthGuard]  // Protege esta ruta
   },
   {
-    path: 'eventos',  // Nueva ruta para eventos
-    loadChildren: () => import('./eventos/eventos.module').then(m => m.EventosModule)  // Asegúrate de usar EventosModule
+    path: 'eventos',
+    loadChildren: () => import('./eventos/eventos.module').then(m => m.EventosModule)
   }
 ];
 
