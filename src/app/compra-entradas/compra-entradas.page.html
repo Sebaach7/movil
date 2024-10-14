@@ -8,7 +8,7 @@
   <form>
     <ion-item>
       <ion-label position="floating">Evento</ion-label>
-      <ion-select [(ngModel)]="selectedEvent" name="selectedEvent" placeholder="Selecciona un evento" required>
+      <ion-select [(ngModel)]="selectedEvent" name="selectedEvent" (ionChange)="setEventoDetalles()" placeholder="Selecciona un evento" required>
         <ion-select-option value="radiohead">Radiohead</ion-select-option>
         <ion-select-option value="thestrokes">The Strokes</ion-select-option>
         <ion-select-option value="jeffbuckley">Jeff Buckley</ion-select-option>
@@ -17,11 +17,21 @@
 
     <ion-item>
       <ion-label position="floating">Cantidad de Entradas</ion-label>
-      <ion-input [(ngModel)]="ticketCount" name="ticketCount" type="number" min="1" max="10" required></ion-input>
+      <ion-input [(ngModel)]="ticketCount" (ionChange)="calcularPrecioTotal()" name="ticketCount" type="number" min="1" max="10" required></ion-input>
     </ion-item>
 
-    <ion-button expand="full" (click)="comprarEntradas()" color="primary">
-      {{ isEditing ? 'Actualizar Entrada' : 'Comprar Entradas' }}
+    <ion-item>
+      <ion-label>Descripción</ion-label>
+      <ion-textarea [(ngModel)]="descripcion" name="descripcion" readonly></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Precio Total</ion-label>
+      <ion-input [(ngModel)]="precioTotal" name="precioTotal" type="number" readonly></ion-input>
+    </ion-item>
+
+    <ion-button expand="full" (click)="agregarAlCarrito()" color="primary">
+      Agregar al Carrito
     </ion-button>
 
     <ion-button *ngIf="isEditing" expand="full" (click)="cancelarEdicion()" color="medium">
@@ -29,23 +39,30 @@
     </ion-button>
   </form>
 
-  <h2>Entradas Compradas</h2>
-
+  <!-- Mostrar carrito -->
+  <h2>Carrito de Entradas</h2>
   <ion-list>
-    <ion-item *ngFor="let entrada of entradas">
+    <ion-item *ngFor="let entrada of carrito; let i = index">
       <ion-label>
         <h3>{{ entrada.evento | titlecase }}</h3>
         <p>Cantidad: {{ entrada.cantidad }}</p>
+        <p>Descripción: {{ entrada.descripcion }}</p>
+        <p>Precio Total: {{ entrada.precio | currency }}</p>
       </ion-label>
-      <ion-button slot="end" color="warning" (click)="editarEntrada(entrada)">
+      <ion-button slot="end" color="warning" (click)="editarEntradaCarrito(entrada)">
         Editar
       </ion-button>
-      <ion-button slot="end" color="danger" (click)="eliminarEntrada(entrada.id)">
+      <ion-button slot="end" color="danger" (click)="eliminarEntradaCarrito(i)">
         Eliminar
       </ion-button>
     </ion-item>
   </ion-list>
 
-  <!-- Spinner de animación que se activará durante la compra -->
+  <!-- Mostrar el botón de compra solo si hay entradas en el carrito -->
+  <ion-button *ngIf="carrito.length > 0" expand="full" (click)="comprarEntradas()" color="success">
+    Comprar Entradas
+  </ion-button>
+
+  <!-- Spinner de animación que se activará durante la compra o edición -->
   <ion-spinner *ngIf="showSpinner" name="crescent"></ion-spinner>
 </ion-content>

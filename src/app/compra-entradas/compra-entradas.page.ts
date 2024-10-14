@@ -12,114 +12,148 @@ export class CompraEntradasPage implements OnInit {
 
   selectedEvent = '';
   ticketCount = 1;
-  showSpinner = false;  // Spinner que aparece durante las operaciones
-  entradas: Entrada[] = [];  // Almacena todas las entradas
-  isEditing = false;  // Indica si se está editando una entrada
-  editEntradaId: string | null = null;  // Almacena el ID de la entrada que se está editando
+  descripcion = '';  // Descripción del evento
+  precioUnitario = 0;  // Precio por entrada
+  precioTotal = 0;  // Precio total por evento seleccionado
+  carrito: Entrada[] = [];  // Carrito de compras con múltiples entradas
+  showSpinner = false;
+  entradas: Entrada[] = [];  // Array para almacenar las entradas del servidor
+  isEditing = false;  // Indica si estamos editando una entrada
+  editEntradaId: string | null = null;  // Almacenar el ID de la entrada que estamos editando
   
   constructor(private toastController: ToastController, private entradasService: EntradasService) {}
 
   ngOnInit() {
-    this.loadEntradas();  // Leer todas las entradas cuando la página carga
+    this.loadEntradas();  // Cargar las entradas desde Firebase cuando la página cargue
   }
 
-  // **CREAR o ACTUALIZAR** una entrada
-  async comprarEntradas() {
-    if (!this.selectedEvent || this.ticketCount < 1 || this.ticketCount > 10) {
-      const toast = await this.toastController.create({
-        message: 'Por favor, selecciona un evento y una cantidad válida de entradas (entre 1 y 10).',
-        duration: 2000,
-        color: 'danger'
-      });
-      await toast.present();
-    } else {
-      this.showSpinner = true;  // Mostrar el spinner mientras se procesa la solicitud
+  // Cargar detalles según el evento seleccionado
+  setEventoDetalles() {
+    switch (this.selectedEvent) {
+      case 'radiohead':
+        this.descripcion = "Sumérgete en una experiencia inolvidable con los sonidos envolventes y experimentales de Radiohead.";
+        this.precioUnitario = 75000;
+        break;
+      case 'thestrokes':
+        this.descripcion = "Prepárate para una noche llena de energía y rock con The Strokes.";
+        this.precioUnitario = 55000;
+        break;
+      case 'jeffbuckley':
+        this.descripcion = "Disfruta de las baladas emotivas y la voz inigualable de Jeff Buckley.";
+        this.precioUnitario = 60000;
+        break;
+      default:
+        this.descripcion = '';
+        this.precioUnitario = 0;
+        break;
+    }
+    this.calcularPrecioTotal();  // Calcular el precio total por el evento seleccionado
+  }
 
-      const newEntrada: Entrada = {
-        id: this.editEntradaId || '',  // Si estamos editando, usamos el ID existente
+  // Calcular el precio total por evento seleccionado
+  calcularPrecioTotal() {
+    this.precioTotal = this.precioUnitario * this.ticketCount;
+  }
+
+  // Agregar la entrada seleccionada al carrito
+  agregarAlCarrito() {
+    if (!this.selectedEvent || this.ticketCount < 1 || this.ticketCount > 10 || this.precioUnitario <= 0) {
+      this.mostrarToast('Por favor, selecciona un evento, una cantidad válida de entradas y un precio.', 'danger');
+    } else {
+      const nuevaEntrada: Entrada = {
+        id: this.editEntradaId || '',  // ID temporal hasta que se guarde en Firebase
         evento: this.selectedEvent,
-        cantidad: this.ticketCount
+        cantidad: this.ticketCount,
+        descripcion: this.descripcion,
+        precio: this.precioTotal  // Precio total para la cantidad seleccionada
       };
 
-      try {
-        if (this.isEditing) {
-          // **ACTUALIZAR** una entrada
-          await this.entradasService.updateEntrada(this.editEntradaId!, newEntrada);
-          const toast = await this.toastController.create({
-            message: `Entrada para ${this.selectedEvent} actualizada con éxito`,
-            duration: 2000,
-            color: 'success'
-          });
-          await toast.present();
-        } else {
-          // **CREAR** una nueva entrada
-          await this.entradasService.createEntrada(newEntrada);
-          const toast = await this.toastController.create({
-            message: `Has comprado ${this.ticketCount} entradas para ${this.selectedEvent}`,
-            duration: 2000,
-            color: 'success'
-          });
-          await toast.present();
-        }
-      } catch (error) {
-        const toast = await this.toastController.create({
-          message: 'Error al procesar la solicitud.',
-          duration: 2000,
-          color: 'danger'
-        });
-        await toast.present();
-      } finally {
-        this.showSpinner = false;  // Ocultar el spinner después de la operación
-        this.isEditing = false;  // Terminar el modo de edición
-        this.editEntradaId = null;  // Limpiar el ID de la entrada
-        this.selectedEvent = '';  // Limpiar el formulario
-        this.ticketCount = 1;
-        this.loadEntradas();  // Recargar las entradas después de la actualización o creación
+      // Verificar si ya existe una entrada del mismo evento en el carrito
+      const entradaExistente = this.carrito.find(entrada => entrada.evento === this.selectedEvent);
+
+      if (entradaExistente) {
+        // Si ya existe, actualizamos la cantidad y el precio total
+        entradaExistente.cantidad += this.ticketCount;
+        entradaExistente.precio += this.precioTotal;
+      } else {
+        // Si no existe, agregamos la nueva entrada al carrito
+        this.carrito.push(nuevaEntrada);
       }
+
+      // Limpiar el formulario
+      this.selectedEvent = '';
+      this.ticketCount = 1;
+      this.descripcion = '';
+      this.precioUnitario = 0;
+      this.precioTotal = 0;
     }
   }
 
-  // **LEER** todas las entradas
+  // Guardar todas las entradas del carrito en Firebase
+  async comprarEntradas() {
+    if (this.carrito.length === 0) {
+      this.mostrarToast('El carrito está vacío.', 'danger');
+      return;
+    }
+
+    this.showSpinner = true;
+
+    try {
+      for (const entrada of this.carrito) {
+        if (entrada.id) {
+          // Si ya tiene un ID, estamos editando la entrada
+          await this.entradasService.updateEntrada(entrada.id, entrada);
+        } else {
+          // Si no tiene un ID, creamos una nueva entrada
+          await this.entradasService.createEntrada(entrada);
+        }
+      }
+      this.mostrarToast('Entradas compradas con éxito.', 'success');
+    } catch (error) {
+      this.mostrarToast('Error al procesar la solicitud.', 'danger');
+    } finally {
+      this.showSpinner = false;
+      this.carrito = [];  // Vaciar el carrito después de la compra
+      this.loadEntradas();  // Recargar las entradas
+    }
+  }
+
+  // Mostrar un mensaje de toast
+  async mostrarToast(mensaje: string, color: string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      duration: 2000,
+      color: color
+    });
+    await toast.present();
+  }
+
+  // Cargar todas las entradas desde Firebase
   loadEntradas() {
-    this.showSpinner = true;  // Mostrar el spinner al cargar las entradas
+    this.showSpinner = true;
     this.entradasService.getEntradas().subscribe((data: Entrada[]) => {
       this.entradas = data;
-      this.showSpinner = false;  // Ocultar el spinner después de cargar las entradas
+      this.showSpinner = false;
     }, (error) => {
+      this.showSpinner = false;
       console.error('Error al cargar las entradas:', error);
-      this.showSpinner = false;  // Ocultar el spinner en caso de error
     });
   }
 
-  // **ELIMINAR** una entrada
-  eliminarEntrada(id: string) {
-    this.showSpinner = true;  // Mostrar el spinner mientras se elimina
-    this.entradasService.deleteEntrada(id).then(async () => {
-      const toast = await this.toastController.create({
-        message: 'Entrada eliminada con éxito.',
-        duration: 2000,
-        color: 'danger'
-      });
-      await toast.present();
-      this.loadEntradas();  // Recargar las entradas después de eliminar
-    }).catch(async () => {
-      const toast = await this.toastController.create({
-        message: 'Error al eliminar la entrada.',
-        duration: 2000,
-        color: 'danger'
-      });
-      await toast.present();
-    }).finally(() => {
-      this.showSpinner = false;  // Ocultar el spinner al finalizar la operación
-    });
-  }
-
-  // **EDITAR** una entrada (cargar en el formulario para modificar)
-  editarEntrada(entrada: Entrada) {
+  // Editar una entrada del carrito
+  editarEntradaCarrito(entrada: Entrada) {
     this.selectedEvent = entrada.evento;
     this.ticketCount = entrada.cantidad;
-    this.editEntradaId = entrada.id;  // Guardar el ID de la entrada que estamos editando
-    this.isEditing = true;  // Cambiar el estado para indicar que estamos editando
+    this.descripcion = entrada.descripcion;
+    this.precioUnitario = entrada.precio / entrada.cantidad;  // Precio unitario
+    this.precioTotal = entrada.precio;
+    this.editEntradaId = entrada.id;
+    this.isEditing = true;
+  }
+
+  // Eliminar una entrada del carrito
+  eliminarEntradaCarrito(index: number) {
+    this.carrito.splice(index, 1);
   }
 
   // Cancelar la edición
@@ -128,5 +162,8 @@ export class CompraEntradasPage implements OnInit {
     this.editEntradaId = null;
     this.selectedEvent = '';
     this.ticketCount = 1;
+    this.descripcion = '';
+    this.precioUnitario = 0;
+    this.precioTotal = 0;
   }
 }
