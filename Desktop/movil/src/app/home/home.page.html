@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-img class="logo" slot="start" src="assets/icon/logo.png"></ion-img>
+    <ion-title>Compra y Venta de Entradas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="logo-container"></div>
+  <h2>Bienvenido, {{ username }}!</h2>
+  <p>¡Nos alegra que estés de vuelta en Compra y Venta de Entradas! Disfruta de nuestros próximos eventos y compra tus entradas ahora.</p>
+
+  <div class="image-container">
+    <img src="assets/icon/jeffbuckley.png" alt="Thom Yorke" class="thom-yorke-img">
+  </div>
+
+  <h1>¿Quiénes somos?</h1>
+  <p>¡Bienvenido a Compra y Venta de Entradas! Este es un lugar para gente que gusta de la buena música y de los conciertos.</p>
+
+  <!-- Botones para iniciar sesión o registrarse -->
+  <div class="fixed-bottom-buttons">
+    <ion-button routerLink="/login" expand="block" shape="round" color="primary">
+      <ion-icon slot="start" name="log-in"></ion-icon>Iniciar Sesión
+    </ion-button>
+
+    <ion-button routerLink="/registro" expand="block" shape="round" color="secondary">
+      <ion-icon slot="start" name="person-add"></ion-icon>Registrarse
+    </ion-button>
+
+    <!-- Botón para redirigir a la página de eventos -->
+    <ion-button routerLink="/eventos" expand="block" shape="round" color="tertiary">
+      <ion-icon slot="start" name="musical-notes"></ion-icon>Ver Eventos
+    </ion-button>
+  </div>
+</ion-content>

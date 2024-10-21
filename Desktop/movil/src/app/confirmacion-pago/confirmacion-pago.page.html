@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Confirmación de Pago</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let entrada of carrito">
+      <ion-label>
+        {{ entrada.evento }} - {{ entrada.cantidad }} entradas
+      </ion-label>
+      <ion-note slot="end">{{ entrada.precio | currency }}</ion-note>
+    </ion-item>
+  </ion-list>
+
+  <h3>Total a Pagar: {{ totalCompra | currency }}</h3>
+
+  <ion-button expand="full" color="primary" (click)="confirmarPago()">Confirmar Pago</ion-button>
+</ion-content>
