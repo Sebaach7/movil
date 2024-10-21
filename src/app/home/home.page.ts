@@ -1,22 +1,32 @@
 import { Component, OnInit } from '@angular/core';
+import { SqliteService } from '../services/sqlite.service';
 
 @Component({
   selector: 'app-home',
-  templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss'],
+  templateUrl: 'home.page.html',
+  styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  username: string | null = '';  // Permitir que sea nulo inicialmente
 
-  constructor() {}
+  entradas: any[] = [];
+
+  constructor(private sqliteService: SqliteService) {}
 
   ngOnInit() {
-    this.loadUsername();
+    this.sqliteService.initializeDatabase().then(() => {
+      this.loadEntries();
+    });
   }
 
-  // Método para cargar el nombre del usuario desde localStorage
-  loadUsername() {
-    const storedUsername = localStorage.getItem('username');
-    this.username = storedUsername ? storedUsername : 'Invitado';  // Si es null, mostrar 'Invitado'
+  loadEntries() {
+    this.sqliteService.getEntries().then(data => {
+      this.entradas = data;
+    });
+  }
+
+  addEntry() {
+    this.sqliteService.addEntry('Concierto Radiohead', 'Gran concierto', 50000).then(() => {
+      this.loadEntries();
+    });
   }
 }
